@@ -10,6 +10,9 @@ require_once("models/header.php");
 require_once("models/ajax_calls.php");
 ?>
 
+
+<script type="text/javascript" src="/js/functions.js"></script>
+
 <div class='container container_12'>
 	<div class="currency">
 		<img src="images/bitcoin.png">
@@ -19,7 +22,7 @@ require_once("models/ajax_calls.php");
 	<div class="amount">
 		<form method="post">
 			<label for="dollars" class="symbol"><?php echo $loggedInUser->currencySymbol();?></label>
-			<input type="number" name="dollars" id="dollars" class="dollars">
+			<input type="number" name="dollars" id="dollars" class="dollars" value="0.00">
 			<div class="calc">
 				<div class="key">1</div>
 				<div class="key">2</div>
@@ -30,9 +33,9 @@ require_once("models/ajax_calls.php");
 				<div class="key">7</div>
 				<div class="key">8</div>
 				<div class="key">9</div>
-				<div class="btnkey">del</div>
+				<div class="btnkey">clr</div>
 				<div class="key">0</div>
-				<div class="key">.</div>
+				<div class="key">00</div>
 			</div>
 			<input type="submit" id="submit" >
 		</form>
@@ -79,14 +82,9 @@ require_once("models/ajax_calls.php");
 		//number pad jquery stuff
 		 $('.key').click(function(event){
         var numBox = jQuery('#dollars');
-        if(this.innerHTML == '0'){
-            if (numBox.val().length > 0) {
-                numBox.val(numBox.val() + this.innerHTML);
-            }
-        }
-        else {
-            numBox.val(numBox.val() + this.innerHTML);
-        }
+        
+        numBox.val(keypadEntry(numBox.val(), this.innerHTML));
+        
         jQuery('#dollars').trigger("keyup");		
         event.stopPropagation();
     });
@@ -94,17 +92,13 @@ require_once("models/ajax_calls.php");
 
     
     $('.btnkey').click(function(event){
-        if(this.innerHTML == 'del'){
+        if(this.innerHTML == 'clr'){
             var numBox = jQuery('#dollars');
-            if(numBox.val().length > 0){
-                numBox.val( numBox.val().substring(0, numBox.val().length - 1));
-            }
+            numBox.val('0.00');
+            //trigger keyup to reprocess conversion
+			jQuery('#dollars').trigger("keyup");
+			event.stopPropagation();
         }
-        else{
-            document.getElementById('numBox').innerHTML = '';
-        }
-        jQuery('#dollars').trigger("keyup");
-        event.stopPropagation();
     });
 		
 		jQuery('#dollars').keyup(function(){
